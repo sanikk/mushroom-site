@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}Kaudet{% endblock %}
+{% block content %}
+<h1>Kaudet</h1>
+<ul>
+    {% for season in seasons %}
+    <li>{{season}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

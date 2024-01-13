@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Sightings{% endblock %}
+{% block content %}
+<h1>Sightings</h1>
+
+<h3>Most recent:</h3>
+<ul>
+    {% for sighting in sightings %}
+    <li>{{sighting}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

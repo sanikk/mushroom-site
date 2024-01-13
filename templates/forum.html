@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}Forums{% endblock %}
+{% block content %}
+<h1>Forum</h1>
+<ul>
+    {% for topic in lista %}
+    <li>{{topic}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Sienet{% endblock %}
+{% block content %}
+<h1>Sienet</h1>
+<ul>
+    {% for mushroom in mushrooms %}
+    <li>{{mushroom}}</li>
+    {% endfor %}
+</ul>
+
+<a href="/mushroom_form">Lisää sieni</a>
+{% endblock %}

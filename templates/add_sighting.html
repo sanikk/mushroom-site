@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}Lisää havainto{% endblock %}
+{% block content %}
+<h1>Lisää havainto</h1>
+<ul>
+    {% for mushroom in mushrooms %}
+    <li>{{mushroom}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
