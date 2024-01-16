@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<title>{% block title %}{% endblock %} - Sienikanta</title>
+<title>{% block title %}{% endblock %} - Mushroom spotter</title>
 <h1>Sienikanta</h1>
-<a href="/">Etusivu</a>
-<a href="/mushrooms">Sienilajit</a>
-<a href="/families">Sieniryhmät</a>
-<a href="/sightings">Havainnot</a>
-<a href="/seasons">KuuKaudet</a>
-<a href="/documents">Dokumentit</a>
-<a href="/forum">Foorumi</a>
+<a href="/">Main page</a>
+<a href="/mushrooms">Mushrooms</a>
+<a href="/families">Mushroom families</a>
+<a href="/sightings">Sightings</a>
+<a href="/seasons">Seasons</a>
+<a href="/documents">Documents</a>
+<a href="/forum">Forum</a>
+{% if session.username %}
+ <a href="/logout">Logout({{ session.username }})</a>
+{% else %}
+<form action="/login" method="POST">
+    User <input type="text" name="username"> Password
+    <input type="password" name="password"> <input type="submit" value="Login"> <input type="submit" value="Signup" formaction="/signup">
+</form>
+{% endif %}
 <hr>
 {% block content %} {% endblock %}
 <hr>

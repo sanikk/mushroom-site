@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
-{% block title %}Lisää sieni{% endblock %}
+{% block title %}Add a mushroom{% endblock %}
 {% block content %}
 <form action="/add" method="POST" enctype="multipart/form-data">
-    Sienen nimi
+    Mushroom common name
     <input type="text" name="name"><br>
     <label for="family">Ryhmä</label>
     <select name="family">
@@ -10,18 +10,18 @@
         <option value={{family_id}}>{{family_name}}</option>
         {% endfor %}
     </select><br>
-    <label for="season_start">Kauden alku</label>
+    <label for="season_start">Season start</label>
     <select name="season_start">
         {% for month_id,month_name in months %}
         <option value={{month_id}}>{{month_name}}</option>
         {% endfor %}
     </select>
-    <label for="season_end">Kauden loppu</label>
+    <label for="season_end">Season end</label>
     <select name="season_end">
         {% for month_id,month_name in months %}
         <option value={{month_id}}>{{month_name}}</option>
         {% endfor %}
     </select>
-    <input type="submit" value="Lähetä">
+    <input type="submit" value="Submit">
 </form>
 {% endblock %}

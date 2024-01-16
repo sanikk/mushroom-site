@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request
+from flask import redirect, render_template, request, session
 import calendar
 from app import app
 from db_operations import add_mushroom, get_sightings, get_family_list, get_mushrooms
@@ -7,6 +7,29 @@ from db_operations import add_mushroom, get_sightings, get_family_list, get_mush
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    username = request.form["username"]
+    password = request.form["password"]
+    # CHECK GOES HERE
+    session["username"] = username
+    return redirect("/")
+
+
+@app.route("/signup", methods=["POST"])
+def signup():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    pass
+
+
+@app.route("/logout")
+def logout():
+    del session["username"]
+    return redirect("/")
 
 
 @app.route("/add", methods=["POST"])
@@ -37,9 +60,9 @@ def forum():
     return render_template("forum.html")
 
 
-@app.route("/documents")
-def documents():
-    return render_template("documents.html")
+@app.route("/statistics")
+def statistics():
+    return render_template("statistics.html")
 
 
 @app.route("/families")

@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
-{% block title %}Sienien ryhmät{% endblock %}
+{% block title %}Mushroom groups{% endblock %}
 {% block content %}
-<h1>Sienien ryhmät</h1>
+<h1>Mushroom groups</h1>
 <ul>
     {% for family in families %}
     <li>{{family}}</li>
     {% endfor %}
 </ul>
 
-<a href="/add_family">Lisää sieniryhmä</a>
+<a href="/add_family">Add a mushroom group</a>
 {% endblock %}
