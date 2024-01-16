@@ -17,7 +17,6 @@ classDiagram
     class account{
     int id
     String username
-    String name
     String password
     }
     class sighting {

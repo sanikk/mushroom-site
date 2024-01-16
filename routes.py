@@ -32,7 +32,7 @@ def logout():
     return redirect("/")
 
 
-@app.route("/add", methods=["POST"])
+@app.route("/add_mushroom", methods=["POST"])
 def add():
     add_mushroom(
         request.form["name"], request.form["family"], request.form["season_start"], request.form["season_end"])

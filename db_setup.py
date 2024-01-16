@@ -9,11 +9,13 @@ load_dotenv()
 def drop_db_tables():
     conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
     cur = conn.cursor()
+
     cur.execute("DROP TABLE IF EXISTS sighting;")
     cur.execute("DROP TABLE IF EXISTS account;")
     cur.execute("DROP TABLE IF EXISTS mushroom;")
     cur.execute("DROP TABLE IF EXISTS family;")
     conn.commit()
+
     cur.close()
     conn.close()
 
@@ -21,6 +23,7 @@ def drop_db_tables():
 def create_db_tables():
     conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
     cur = conn.cursor()
+
     sql = "CREATE TABLE family (id SERIAL PRIMARY KEY, name TEXT);"
     cur.execute(sql)
     sql = """CREATE TABLE mushroom (
@@ -35,7 +38,6 @@ def create_db_tables():
             CREATE TABLE account (
                 id SERIAL PRIMARY KEY,
                 username TEXT,
-                name TEXT,
                 password TEXT
             );"""
     cur.execute(sql)
@@ -53,6 +55,7 @@ def create_db_tables():
             );"""
     cur.execute(sql)
     conn.commit()
+
     cur.close()
     conn.close()
 
@@ -60,6 +63,7 @@ def create_db_tables():
 def populate():
     conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
     cur = conn.cursor()
+
     sql = "INSERT INTO family (name) VALUES ('Boletes')"
     cur.execute(sql)
     sql = "INSERT INTO family (name) VALUES ('Albatrellus')"
@@ -68,10 +72,8 @@ def populate():
     cur.execute(sql)
     sql = "INSERT INTO mushroom (name, family_id, season_start, season_end) VALUES ('Sheep Polypore', 2,8,10)"
     cur.execute(sql)
-    #dbtex("INSERT INTO family (name) VALUES ('Rouskut')")
-    #dbtex("INSERT INTO family (name) VALUES ('Haperot')")
-    #dbtex("INSERT INTO family (name) VALUES ('Käävät')")
     conn.commit()
+
     cur.close()
     conn.close()
 
