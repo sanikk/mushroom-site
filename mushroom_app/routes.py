@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, session
 import calendar
 from app import app
-from db_operations import add_mushroom, get_sightings, get_family_list, get_mushrooms
+from db_operations import add_mushroom, get_sightings, get_family_list, get_mushrooms, get_user, add_user
 
 
 @app.route("/")
@@ -14,16 +14,23 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     # CHECK GOES HERE
-    session["username"] = username
+    rep = get_user(username, password)
+    if rep:
+        session["username"] = username
     return redirect("/")
+    # muuten ilmoitetaan virheestä ja jatketaan kysymymistä
 
 
 @app.route("/signup", methods=["POST"])
 def signup():
     username = request.form["username"]
     password = request.form["password"]
-
-    pass
+    rep = get_user(username, password)
+    if not rep:
+        add_user(username, password)
+        session["username"] = username
+        return redirect("/")
+    # muuten ilmotetaan virheestä ja jatketaan kysymistä
 
 
 @app.route("/logout")

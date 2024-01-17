@@ -4,6 +4,13 @@ from app import db
 
 # Account
 def get_user(username, password):
+    """
+
+    :param username:
+    :param password:
+    :return:
+        userrow or None
+    """
     sql = text("SELECT * FROM Account WHERE username = :username AND password = :password")
     return db.session.execute(sql, {"username": username, "password": password}).fetchone()
 

@@ -1,5 +1,5 @@
 from invoke import task
-from db_setup import drop_db_tables, create_db_tables, populate
+from mushroom_app.db_setup import drop_db_tables, create_db_tables, populate
 
 
 # Alustukseen
@@ -24,3 +24,8 @@ def build(c):
     print("Fill her up!")
     populate()
     print("Done!")
+
+
+@task
+def start(c):
+    c.run("flask --app mushroom_app/app run")
