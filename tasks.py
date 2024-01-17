@@ -7,13 +7,16 @@ from db_setup import drop_db_tables, create_db_tables, populate
 def clean(c):
     drop_db_tables()
 
+
 @task
 def tables(c):
     create_db_tables()
 
+
 @task
 def fill(c):
     populate()
+
 
 @task
 def build(c):
@@ -24,3 +27,9 @@ def build(c):
     print("Fill her up!")
     populate()
     print("Done!")
+
+
+@task
+def start(c):
+    c.run("flask -app main run")
+
