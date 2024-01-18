@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, session
 import calendar
 from app import app
-from db_operations import add_mushroom, get_sightings, get_family_list, get_mushrooms, get_user, add_user
+from db_operations import get_mushrooms, get_sightings, get_family_list, create_user, create_mushroom, check_user
 
 
 @app.route("/")
@@ -14,12 +14,13 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
 
-    rep = get_user(username, password)
-    if rep:
-        session["username"] = rep[1]
-    return redirect("/")
-    # return render_template("sightings.html", sightings=[rep])
-    # muuten ilmoitetaan virheestä ja jatketaan kysymymistä
+    ret = check_user(username, password)
+    if ret:
+        session["username"] = ret
+        return redirect("/")
+    # TODO
+    # throw error, ask again
+    raise ValueError("username or password")
 
 
 @app.route("/signup", methods=["POST"])
@@ -27,13 +28,12 @@ def signup():
     username = request.form["username"]
     password = request.form["password"]
     if " " not in username:
-        rep = get_user(username, password)
-        if not rep:
-            add_user(username, password)
-            rep = get_user(username, password)
-            session["username"] = rep[1]
+        ret = create_user(username, password)
+        if ret:
+            session["username"] = ret
             return redirect("/")
     # TODO
+    # throw error, ask again
     raise ValueError("username or password")
 
 
@@ -44,8 +44,8 @@ def logout():
 
 
 @app.route("/add_mushroom", methods=["POST"])
-def add():
-    add_mushroom(
+def add_mushroom():
+    create_mushroom(
         request.form["name"], request.form["family"], request.form["season_start"], request.form["season_end"])
     return redirect("/mushrooms")
 
@@ -55,8 +55,8 @@ def sightings():
     return render_template("sightings.html", sightings=get_sightings())
 
 
-@app.route("/mushroom_form")
-def add_mushroom():
+@app.route("/add_mushroom")
+def add_mushroom_page():
     months = [(i, calendar.month_name[i]) for i in range(1, 13)]
     return render_template("add_mushroom.html", families=get_family_list(), months=months)
 
