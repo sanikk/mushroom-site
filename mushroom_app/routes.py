@@ -13,13 +13,12 @@ def index():
 def login():
     username = request.form["username"]
     password = request.form["password"]
-    # CHECK GOES HERE
+
     rep = get_user(username, password)
     if rep:
         session["username"] = rep[1]
-        # return render_template("sightings.html", sightings=rep)
     return redirect("/")
-    # return render_template("sightings.html", sightings=rep)
+    # return render_template("sightings.html", sightings=[rep])
     # muuten ilmoitetaan virheestä ja jatketaan kysymymistä
 
 
@@ -27,13 +26,15 @@ def login():
 def signup():
     username = request.form["username"]
     password = request.form["password"]
-    rep = get_user(username, password)
-    if not rep:
-        add_user(username, password)
+    if " " not in username:
         rep = get_user(username, password)
-        session["username"] = rep[1]
-        return redirect("/")
-    # muuten ilmotetaan virheestä ja jatketaan kysymistä
+        if not rep:
+            add_user(username, password)
+            rep = get_user(username, password)
+            session["username"] = rep[1]
+            return redirect("/")
+    # TODO
+    raise ValueError("username or password")
 
 
 @app.route("/logout")
@@ -63,11 +64,6 @@ def add_mushroom():
 @app.route("/mushrooms")
 def mushrooms_page():
     return render_template("mushrooms.html", mushrooms=get_mushrooms())
-
-
-@app.route("/forum")
-def forum():
-    return render_template("forum.html")
 
 
 @app.route("/statistics")
