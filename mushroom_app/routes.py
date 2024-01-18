@@ -16,8 +16,10 @@ def login():
     # CHECK GOES HERE
     rep = get_user(username, password)
     if rep:
-        session["username"] = username
+        session["username"] = rep[1]
+        # return render_template("sightings.html", sightings=rep)
     return redirect("/")
+    # return render_template("sightings.html", sightings=rep)
     # muuten ilmoitetaan virheestä ja jatketaan kysymymistä
 
 
@@ -28,7 +30,8 @@ def signup():
     rep = get_user(username, password)
     if not rep:
         add_user(username, password)
-        session["username"] = username
+        rep = get_user(username, password)
+        session["username"] = rep[1]
         return redirect("/")
     # muuten ilmotetaan virheestä ja jatketaan kysymistä
 

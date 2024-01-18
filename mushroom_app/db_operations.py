@@ -41,3 +41,7 @@ def get_family_list():
 # Sightings
 def get_sightings():
     return db.session.execute(text('SELECT id, date, mushroom, location FROM sighting')).fetchall()
+
+
+if "__name__" == "__main__":
+    pass
