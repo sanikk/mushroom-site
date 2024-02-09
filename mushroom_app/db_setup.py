@@ -46,9 +46,10 @@ def create_db_tables():
                 id SERIAL PRIMARY KEY,
                 account_id INTEGER REFERENCES account,
                 mushroom_id INTEGER REFERENCES mushroom,
-                location TEXT,
-                location_type TEXT,
-                location_modifier TEXT,
+                date DATE,
+                location INTEGER,
+                location_type INTEGER,
+                location_modifier INTEGER,
                 season INTEGER,
                 rating INTEGER,
                 notes TEXT
@@ -63,18 +64,11 @@ def create_db_tables():
 def populate():
     conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
     cur = conn.cursor()
-
-    sql = "INSERT INTO family (name) VALUES ('Boletes')"
-    cur.execute(sql)
-    sql = "INSERT INTO family (name) VALUES ('Albatrellus')"
-    cur.execute(sql)
-    sql = "INSERT INTO mushroom (name, family_id, season_start, season_end) VALUES ('Boletus Edulis', 1,6,10)"
-    cur.execute(sql)
-    sql = "INSERT INTO mushroom (name, family_id, season_start, season_end) VALUES ('Sheep Polypore', 2,8,10)"
+    sql = "INSERT INTO family (name) VALUES ('strain'||generate_series(1,10))"
     cur.execute(sql)
     conn.commit()
-
+    sql = "INSERT INTO mushroom (name, family_id, season_start, season_end) VALUES ('mushroom'||generate_series(1,20), floor(random()*10) + 1, floor(random()*8+1), floor(random()*4+8))"
+    cur.execute(sql)
+    conn.commit()
     cur.close()
     conn.close()
-
-
