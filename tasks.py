@@ -1,5 +1,5 @@
 from invoke import task
-from mushroom_app.db_setup import drop_db_tables, create_db_tables, populate
+from mushroom_app.db_setup import drop_db_tables, create_db_tables, populate, testeri, testeri2
 
 
 @task
@@ -31,3 +31,8 @@ def build(c):
 @task
 def start(c):
     c.run("flask --app mushroom_app/app run")
+
+
+@task
+def tester(c):
+    testeri2()

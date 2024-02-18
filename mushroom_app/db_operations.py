@@ -49,6 +49,16 @@ def create_user(username: str, password: str) -> str:
     return __get_user(username)[1]
 
 
+def get_user_list():
+    sql = "SELECT id,username FROM account"
+    return db.session.execute(text(sql)).fetchall()
+
+
+def get_account_info(id_to_look_for: int):
+    print(id_to_look_for)
+    pass
+
+
 # Mushroom
 def create_mushroom(name: str, family_id: str, season_start: str, season_end: str):
     """
@@ -62,24 +72,62 @@ def create_mushroom(name: str, family_id: str, season_start: str, season_end: st
     :return:
         None
     """
-    sql = text("INSERT INTO mushroom (name, family_id, season_start, season_end) VALUES (:name, :family_id, :season_start, :season_end)")
-    db.session.execute(sql, {"name": name, "family_id": family_id, "season_start": season_start, "season_end": season_end})
+    sql = text("""
+    INSERT INTO 
+    mushroom (name, family_id, season_start, season_end) 
+    VALUES (:name, :family_id, :season_start, :season_end)
+    """)
+    db.session.execute(sql, {"name": name, "family_id": family_id,
+                             "season_start": season_start, "season_end": season_end})
     db.session.commit()
 
 
 def get_mushrooms():
-    return db.session.execute(
-        text('SELECT M.name, F.name,M.season_start, M.season_end FROM mushroom M JOIN family F ON M.family_id = F.id')).fetchall()
+    sql = "SELECT M.name, F.name,M.season_start, M.season_end FROM mushroom M JOIN family F ON M.family_id = F.id"
+    return db.session.execute(text(sql)).fetchall()
 
 
 # Family
 def get_family_list():
-    return db.session.execute(text('SELECT id, name FROM family')).fetchall()
+    sql = "SELECT id, name FROM family"
+    return db.session.execute(text(sql)).fetchall()
+
+
+def create_family(family_name):
+    # TODO
+    pass
 
 
 # Sightings
 def get_sightings():
-    return db.session.execute(text('SELECT id, date, mushroom_id, location FROM sighting')).fetchall()
+    sql = "SELECT S.id, S.harvest_date, M.name, S.location FROM sighting S JOIN mushroom M ON S.mushroom_id = M.id"
+    return db.session.execute(text(sql)).fetchall()
+
+
+def get_new_sightings():
+    show_limit = 20
+    sql = """
+    SELECT S.id, S.harvest_date, M.name, S.location 
+    FROM sighting S JOIN mushroom M 
+    ON S.mushroom_id = M.id 
+    ORDER BY S.publish_date DESC LIMIT %s
+    """
+    return db.session.execute(text(sql), (show_limit,)).fetchall()
+
+
+def create_sighting(account_id: int,mushroom_id: int, harvest_date: str, location: int, location_type: int,
+                    location_modifier: int, rating: int, notes: str):
+    sql = """
+    INSERT INTO sighting
+    (account_id, mushroom_id, harvest_date,publish_date, location, location_type, location_modifier, rating, notes)
+    VALUES 
+    (:account_id, :mushroom_id, :harvest_date, NOW(), :location, :location_type, 
+    :location_modifier, :rating, :notes)
+    """
+    values = {account_id: 1, mushroom_id: mushroom_id, harvest_date: harvest_date, location: location,
+              location_type: location_type, location_modifier: location_modifier, rating: rating, notes: notes}
+    db.session.execute(text(sql), values)
+    db.session.commit()
 
 
 if "__name__" == "__main__":

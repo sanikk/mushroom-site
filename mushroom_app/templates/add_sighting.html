@@ -1,10 +1,22 @@
 {% extends "layout.html" %}
 {% block title %}Add a sighting{% endblock %}
 {% block content %}
-<h1>Add a sighting</h1>
-<ul>
-    {% for mushroom in mushrooms %}
-    <li>{{mushroom}}</li>
-    {% endfor %}
-</ul>
+<form action="/sightings/add" method="POST" enctype="multipart/form-data">
+    Mushroom common name
+    <input type="text" name="name"><br>
+    <label for="mushroom">Mushroom</label>
+    <select name="mushroom">
+        {% for mushroom_id,mushroom_name in mushrooms %}
+        <option value={{mushroom_id}}>{{mushroom_name}}</option>
+        {% endfor %}
+    </select><br>
+    <label for="season_start">Season start</label>
+    <select name="season_start">
+        {% for month_id,month_name in months %}
+        <option value={{month_id}}>{{month_name}}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="harvest_date" required />
+    <input type="submit" value="Submit">
+</form>
 {% endblock %}
