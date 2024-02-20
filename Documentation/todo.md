@@ -3,8 +3,9 @@ Pages:
   - [x] Mushrooms
     - [ ] add harvest counts for mushrooms 
     - [x] single mushroom page
-- [ ] Mushroom families
-    - [ ] single family page
+- [x] Mushroom families
+    - [x] single family page
+      - [ ] add harvest counts for mushrooms 
 - [ ] Sightings
     - [ ] single sighting page
 - Seasons

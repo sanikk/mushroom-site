@@ -75,7 +75,7 @@ def populate():
 
     conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
     with conn.cursor() as cur:
-        sql = "INSERT INTO family (name) VALUES ('strain'||generate_series(1, %s))"
+        sql = "INSERT INTO family (name) VALUES ('group'||generate_series(1, %s))"
         cur.execute(sql, (families,))
         conn.commit()
 

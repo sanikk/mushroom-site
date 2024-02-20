@@ -3,7 +3,8 @@ import calendar
 from app import app
 from db_operations import (get_mushrooms_list, get_sightings, get_family_list, create_user, create_mushroom,
                            check_user, get_user_list, get_new_sightings, create_sighting, create_family,
-                           get_account_info, get_mushroom, get_mushroom_last_sightings, get_mushroom_top_sightings)
+                           get_account_info, get_mushroom, get_mushroom_last_sightings, get_mushroom_top_sightings,
+                           get_family_members, get_family)
 
 
 @app.route("/")
@@ -125,15 +126,15 @@ def statistics():
 
 
 @app.route("/families")
-# TODO
 def families():
     return render_template("families.html", families=get_family_list())
 
 
 @app.route("/families/<int:family_id>")
 def family_page(family_id):
-    # TODO
-    return render_template("todo.html")
+    mushrooms = get_family_members(family_id)
+    family = get_family(family_id)
+    return render_template("family_page.html", mushrooms=mushrooms, family=family)
 
 
 @app.route("/families/add", methods=["POST"])

@@ -3,10 +3,10 @@
 {% block content %}
 <h1>Mushroom groups</h1>
 <ul>
-    {% for family in families %}
-    <li>{{family}}</li>
+    {% for id,name in families %}
+        <li><a href="/families/{{ id }}">{{name}}</a></li>
     {% endfor %}
 </ul>
 
-<a href="/families/new">Add a mushroom group</a>
+<a href="/families/new">Add a new mushroom group</a>
 {% endblock %}

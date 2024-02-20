@@ -103,10 +103,22 @@ def get_mushroom(mushroom_id:int):
     return db.session.execute(text(sql), {"mushroom_id": mushroom_id}).fetchone()
 
 
+def get_family_members(family_id:int):
+    sql = """
+    SELECT id, name FROM mushroom WHERE family_id=:family_id
+    """
+    return db.session.execute(text(sql), {"family_id": family_id}).fetchall()
+
+
 # Family
 def get_family_list():
     sql = "SELECT id, name FROM family"
     return db.session.execute(text(sql)).fetchall()
+
+
+def get_family(family_id: int):
+    sql = "SELECT id,name FROM family WHERE id=:family_id"
+    return db.session.execute(text(sql), {"family_id": family_id}).fetchone()
 
 
 def create_family(family_name):

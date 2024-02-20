@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Mushroom family: {{family.name}}{% endblock %}
+{% block content %}
+<h2>Mushroom family: {{family.name}}</h2>
+<p></p>
+<h3>Members of {{ family.name }}</h3>
+<ul>
+    {% for mushroom in mushrooms %}
+        <li><a href="/mushroom/{{ mushroom.id }}">{{ mushroom.name }}.</a></li>
+    {% endfor %}
+</ul>
+
+<a href="/mushrooms/new">Delete this mushroom group</a>
+{% endblock %}
