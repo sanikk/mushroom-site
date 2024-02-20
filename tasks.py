@@ -34,5 +34,10 @@ def start(c):
 
 
 @task
+def dev(c):
+    c.run("flask --app mushroom_app/app --debug run")
+
+
+@task
 def tester(c):
     testeri2()
