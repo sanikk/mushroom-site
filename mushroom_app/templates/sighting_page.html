@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}Harvest {{ harvest.id }}{% endblock %}
+{% block content %}
+<h2>Harvest on {{harvest.harvest_date}}</h2>
+<p>{{ harvest.mushroom_name }} of the family <a href="/families/{{ harvest.family_id }}">{{ harvest.family_name }}</a>.</p>
+<h2>{{ harvest.rating }}</h2>
+
+    <h3>Last 5 harvests of {{ harvest }}</h3>
+
+    <h3>Last 5 harvests of {{ harvest.username }}</h3>
+    <ul>
+    {% for field in harvest %}
+        <li><a href="/sightings/">Rating {{ harvest }} on {{ harvest }} in location {{ harvest }}</a></li>
+    {% endfor %}
+    </ul>
+    <h3>Last 5 harvests of {{ harvest.mushroom_name }}</h3>
+<a href="/mushrooms/new">Delete harvest</a>
+{% endblock %}
+
+
+
+

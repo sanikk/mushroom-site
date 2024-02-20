@@ -4,7 +4,7 @@ from app import app
 from db_operations import (get_mushrooms_list, get_sightings, get_family_list, create_user, create_mushroom,
                            check_user, get_user_list, get_new_sightings, create_sighting, create_family,
                            get_account_info, get_mushroom, get_mushroom_last_sightings, get_mushroom_top_sightings,
-                           get_family_members, get_family)
+                           get_family_members, get_family, get_sighting)
 
 
 @app.route("/")
@@ -103,7 +103,8 @@ def sightings():
 @app.route("/sightings/<int:sighting_id>")
 # TODO
 def sighting_page(sighting_id):
-    return render_template("todo.html")
+    harvest = get_sighting(sighting_id)
+    return render_template("sighting_page.html", harvest=harvest)
 
 
 @app.route("/sightings/new")

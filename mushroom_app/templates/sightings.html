@@ -5,8 +5,8 @@
 
 <h3>Most recent:</h3>
 <ul>
-    {% for sighting in sightings %}
-    <li>{{sighting}}</li>
+    {% for sighting_id,name,harvest_date,location,rating in sightings %}
+        <li><a href="/sightings/{{ sighting_id }}">{{ harvest_date }} a harvest of {{name}} in {{ location }} with rating {{ rating }}</a></li>
     {% endfor %}
 </ul>
 <a href="/sightings/new">Add a sighting</a>

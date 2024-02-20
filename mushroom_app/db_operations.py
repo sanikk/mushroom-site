@@ -135,7 +135,7 @@ def get_sightings():
 def get_new_sightings():
     show_limit = 20
     sql = """
-    SELECT S.id, S.harvest_date, M.name, S.location 
+    SELECT S.id, M.name, S.harvest_date, S.location, S.rating
     FROM sighting S JOIN mushroom M 
     ON S.mushroom_id = M.id 
     ORDER BY S.publish_date DESC 
@@ -169,12 +169,17 @@ def get_mushroom_top_sightings(mushroom_id: int, limit: int):
     LIMIT :limit"""
     return db.session.execute(text(sql), {"mushroom_id": mushroom_id, "limit": limit}).fetchall()
 
-    #     """
-    # SELECT S.id, S.harvest_date, M.name
-    # FROM sighting S JOIN mushroom M on S.mushroom_id = M.id
-    # WHERE S.mushroom_id = :mushroom_id
-    # ORDER BY harvest_date DESC
-    # LIMIT :limit"""
+
+def get_sighting(sighting_id: int):
+    sql = """
+    SELECT S.id, M.name AS mushroom_name, S.mushroom_id, M.family_id, F.name AS family_name, 
+    S.account_id, A.username, S.harvest_date, S.rating 
+    FROM sighting S 
+    JOIN mushroom M ON S.mushroom_id = M.id 
+    JOIN family F ON M.family_id = F.id
+    JOIN account A ON S.account_id = A.id
+    WHERE S.id = :sighting_id"""
+    return db.session.execute(text(sql), {"sighting_id": sighting_id}).fetchone()
 
 
 def create_sighting(account_id: int,mushroom_id: int, harvest_date: str, location: int, location_type: int,
