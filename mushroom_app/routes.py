@@ -1,9 +1,9 @@
 from flask import redirect, render_template, request, session
 import calendar
 from app import app
-from db_operations import (get_mushrooms, get_sightings, get_family_list, create_user, create_mushroom,
+from db_operations import (get_mushrooms_list, get_sightings, get_family_list, create_user, create_mushroom,
                            check_user, get_user_list, get_new_sightings, create_sighting, create_family,
-                           get_account_info)
+                           get_account_info, get_mushroom, get_mushroom_last_sightings, get_mushroom_top_sightings)
 
 
 @app.route("/")
@@ -53,19 +53,20 @@ def accounts():
     return render_template("accounts.html", users=get_user_list())
 
 
-@app.route("/accounts/<int:id>")
+@app.route("/accounts/<int:id_to_look_for>")
 def account_page(id_to_look_for):
     # TODO
-    account_info = get_account_info(id_to_look_for)
-    return render_template("todo.html", account_info=account_info)
-    pass
+    ret = get_account_info(id_to_look_for)
+    if ret:
+        account_id, account_name = ret
+        return render_template("account_page.html", account_id=account_id, account_name=account_name)
 
 
 # Mushrooms
 
 @app.route("/mushrooms")
 def mushrooms_page():
-    return render_template("mushrooms.html", mushrooms=get_mushrooms())
+    return render_template("mushrooms.html", mushrooms=get_mushrooms_list())
 
 
 @app.route("/mushrooms/add", methods=["POST"])
@@ -75,10 +76,14 @@ def add_mushroom():
     return redirect("/mushrooms")
 
 
-@app.route("/mushrooms/<mushroom_id:int>")
+@app.route("/mushrooms/<int:mushroom_id>")
 # TODO
 def mushroom_page(mushroom_id):
-    return render_template("todo.html")
+    mushroom = get_mushroom(mushroom_id)
+    last_harvests = get_mushroom_last_sightings(mushroom_id, 5)
+    top_sights = get_mushroom_top_sightings(mushroom_id, 5)
+    return render_template("mushroom_page.html",
+                           mushroom=mushroom, last_harvests=last_harvests)
 
 
 @app.route("/mushrooms/new")
@@ -94,7 +99,7 @@ def sightings():
     return render_template("sightings.html", sightings=get_new_sightings())
 
 
-@app.route("/sightings/<sighting_id:int>")
+@app.route("/sightings/<int:sighting_id>")
 # TODO
 def sighting_page(sighting_id):
     return render_template("todo.html")
@@ -113,22 +118,26 @@ def add_sighting():
 
 
 @app.route("/statistics")
+# optional
+# TODO
 def statistics():
     return render_template("statistics.html")
 
 
 @app.route("/families")
+# TODO
 def families():
     return render_template("families.html", families=get_family_list())
 
 
-@app.route("/families/<family_id:int>")
+@app.route("/families/<int:family_id>")
 def family_page(family_id):
     # TODO
     return render_template("todo.html")
 
 
 @app.route("/families/add", methods=["POST"])
+# TODO
 def add_family():
     create_family(
         request.form["mushroom"], request.form["family"], request.form["harvest_date"], request.form["rating"])
@@ -141,5 +150,6 @@ def new_family_page():
 
 
 @app.route("/seasons")
+# TODO
 def seasons():
     return render_template("seasons.html")

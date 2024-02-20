@@ -3,8 +3,8 @@
 {% block content %}
 <h1>Mushrooms</h1>
 <ul>
-    {% for mushroom in mushrooms %}
-    <li>{{mushroom}}</li>
+    {% for id,name,family in mushrooms %}
+    <li><a href="/mushrooms/{{id}}">{{name}} ({{family}})</a></li>
     {% endfor %}
 </ul>
 

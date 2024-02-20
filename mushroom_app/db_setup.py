@@ -51,7 +51,7 @@ def create_db_tables():
                 account_id INTEGER REFERENCES account,
                 mushroom_id INTEGER REFERENCES mushroom,
                 harvest_date DATE,
-                publish_date TIMESTAMP,
+                publish_date TIMESTAMPTZ DEFAULT NOW(),
                 location INTEGER,
                 location_type INTEGER,
                 location_modifier INTEGER,

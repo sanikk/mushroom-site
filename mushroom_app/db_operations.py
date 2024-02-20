@@ -16,6 +16,18 @@ def __get_user(username: str):
     return db.session.execute(sql, {"username": username}).fetchone()
 
 
+def __get_account(user_id: int):
+    """
+    Get account info by user_id
+
+    :param username: string
+    :return:
+        password hash as str or None
+    """
+    sql = text("SELECT id,username FROM Account WHERE id = :user_id")
+    return db.session.execute(sql, {"user_id": user_id}).fetchone()
+
+
 def check_user(username: str, password: str) -> str:
     """
     Check password against password hash
@@ -25,9 +37,9 @@ def check_user(username: str, password: str) -> str:
     :return:
         username or ""
     """
-    ret = __get_user(username)
-    if check_password_hash(ret, password):
-        return ret[1]
+    user_id, username, password_hash = __get_user(username)
+    if check_password_hash(password_hash, password):
+        return username
     return ""
 
 
@@ -55,8 +67,7 @@ def get_user_list():
 
 
 def get_account_info(id_to_look_for: int):
-    print(id_to_look_for)
-    pass
+    return __get_account(id_to_look_for)
 
 
 # Mushroom
@@ -82,9 +93,14 @@ def create_mushroom(name: str, family_id: str, season_start: str, season_end: st
     db.session.commit()
 
 
-def get_mushrooms():
-    sql = "SELECT M.name, F.name,M.season_start, M.season_end FROM mushroom M JOIN family F ON M.family_id = F.id"
+def get_mushrooms_list():
+    sql = "SELECT M.id, M.name, F.name FROM mushroom M JOIN family F ON M.family_id = F.id"
     return db.session.execute(text(sql)).fetchall()
+
+
+def get_mushroom(mushroom_id:int):
+    sql = "SELECT M.name, M.family_id, F.name AS family_name, M.season_start, M.season_end FROM mushroom m JOIN family F ON M.family_id = F.id WHERE m.id=:mushroom_id"
+    return db.session.execute(text(sql), {"mushroom_id": mushroom_id}).fetchone()
 
 
 # Family
@@ -110,9 +126,34 @@ def get_new_sightings():
     SELECT S.id, S.harvest_date, M.name, S.location 
     FROM sighting S JOIN mushroom M 
     ON S.mushroom_id = M.id 
-    ORDER BY S.publish_date DESC LIMIT %s
+    ORDER BY S.publish_date DESC 
+    LIMIT :show_limit
     """
-    return db.session.execute(text(sql), (show_limit,)).fetchall()
+    return db.session.execute(text(sql), {"show_limit": show_limit}).fetchall()
+
+
+def get_mushroom_last_sightings(mushroom_id: int, limit: int):
+
+    sql = """
+    WITH sights AS 
+    (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY harvest_date DESC LIMIT :limit)
+    
+    SELECT S.id, S.harvest_date, M.name, S.location, S.location_type, S.location_modifier, S.rating 
+    FROM sights S JOIN mushroom M on S.mushroom_id = M.id
+    WHERE S.mushroom_id = :mushroom_id
+    ORDER BY harvest_date DESC 
+    LIMIT :limit"""
+    return db.session.execute(text(sql), {"mushroom_id":mushroom_id, "limit":limit}).fetchall()
+
+
+def get_mushroom_top_sightings(mushroom_id: int, limit: int):
+    pass
+    #     """
+    # SELECT S.id, S.harvest_date, M.name
+    # FROM sighting S JOIN mushroom M on S.mushroom_id = M.id
+    # WHERE S.mushroom_id = :mushroom_id
+    # ORDER BY harvest_date DESC
+    # LIMIT :limit"""
 
 
 def create_sighting(account_id: int,mushroom_id: int, harvest_date: str, location: int, location_type: int,
