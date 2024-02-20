@@ -133,7 +133,6 @@ def get_new_sightings():
 
 
 def get_mushroom_last_sightings(mushroom_id: int, limit: int):
-
     sql = """
     WITH sights AS 
     (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY harvest_date DESC LIMIT :limit)
@@ -147,7 +146,17 @@ def get_mushroom_last_sightings(mushroom_id: int, limit: int):
 
 
 def get_mushroom_top_sightings(mushroom_id: int, limit: int):
-    pass
+    sql = """
+    WITH sights AS 
+    (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY rating DESC, harvest_date DESC LIMIT :limit)
+
+    SELECT S.id, S.harvest_date, M.name, S.location, S.location_type, S.location_modifier, S.rating 
+    FROM sights S JOIN mushroom M on S.mushroom_id = M.id
+    WHERE S.mushroom_id = :mushroom_id
+    ORDER BY S.rating DESC, S.harvest_date DESC 
+    LIMIT :limit"""
+    return db.session.execute(text(sql), {"mushroom_id": mushroom_id, "limit": limit}).fetchall()
+
     #     """
     # SELECT S.id, S.harvest_date, M.name
     # FROM sighting S JOIN mushroom M on S.mushroom_id = M.id

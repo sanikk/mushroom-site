@@ -81,9 +81,9 @@ def add_mushroom():
 def mushroom_page(mushroom_id):
     mushroom = get_mushroom(mushroom_id)
     last_harvests = get_mushroom_last_sightings(mushroom_id, 5)
-    top_sights = get_mushroom_top_sightings(mushroom_id, 5)
+    top_harvests = get_mushroom_top_sightings(mushroom_id, 5)
     return render_template("mushroom_page.html",
-                           mushroom=mushroom, last_harvests=last_harvests)
+                           mushroom=mushroom, last_harvests=last_harvests, top_harvests=top_harvests)
 
 
 @app.route("/mushrooms/new")

@@ -6,14 +6,14 @@
 <h3>Last 5 harvests of {{ mushroom.name }}</h3>
 <ul>
     {% for harvest in last_harvests %}
-        <li><a href="/sightings/{{ harvest.id }}">{{ harvest.harvest_date }} in {{ harvest.location }}</a></li>
+        <li><a href="/sightings/{{ harvest.id }}">{{ harvest.harvest_date }} in location {{ harvest.location }} with rating {{ harvest.rating }}</a></li>
     {% endfor %}
 </ul>
 
     <h3>Top 5 harvests of {{ mushroom.name }}</h3>
     <ul>
     {% for harvest in top_harvests %}
-    <li>{{ harvest }}</li>
+        <li><a href="/sightings/{{ harvest.id }}">Rating {{ harvest.rating }} on {{ harvest.harvest_date }} in location {{ harvest.location }}</a></li>
     {% endfor %}
     </ul>
 <a href="/mushrooms/new">Delete mushroom</a>
