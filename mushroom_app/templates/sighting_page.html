@@ -2,18 +2,28 @@
 {% block title %}Harvest {{ harvest.id }}{% endblock %}
 {% block content %}
 <h2>Harvest on {{harvest.harvest_date}}</h2>
+<p>Reported by <a href="/accounts/{{ harvest.account_id }}">{{ harvest.account_name }}</a> at {{ harvest.publish_date }}.</p>
 <p>{{ harvest.mushroom_name }} of the family <a href="/families/{{ harvest.family_id }}">{{ harvest.family_name }}</a>.</p>
-<h2>{{ harvest.rating }}</h2>
-
-    <h3>Last 5 harvests of {{ harvest }}</h3>
-
-    <h3>Last 5 harvests of {{ harvest.username }}</h3>
+<p>Found in a {{ harvest.location_modifier }} {{ harvest.location_type }} near {{ harvest.location }}</p>
+<div style="border: 3px solid black">
+Rating<br>
+<h2>{{ harvest.rating }} / 10</h2>
+</div>
+    <h3>Last 5 harvests of <a href="/mushrooms/{{harvest.mushroom_id}}">{{ harvest.mushroom_name }}</a></h3>
     <ul>
-    {% for field in harvest %}
-        <li><a href="/sightings/">Rating {{ harvest }} on {{ harvest }} in location {{ harvest }}</a></li>
+    {% for sighting in mushroom_harvest %}
+        <li><a href="/sightings/{{ sighting.id }}">On {{ sighting.harvest_date }} at {{ sighting.location }}</a>,
+            a {{ sighting.location_modifier }} {{ sighting.location_type }} with rating {{ sighting.rating }}
+            by <a href="/accounts/{{ sighting.account_id }}">{{ sighting.account_name }}</a></li>
     {% endfor %}
     </ul>
-    <h3>Last 5 harvests of {{ harvest.mushroom_name }}</h3>
+    <h3>Last 5 harvests of <a href="{{ harvest.account_id }}">{{ harvest.account_name }}</a></h3>
+    <ul>
+    {% for sighting in user_harvest %}
+        <li><a href="/sightings/{{ sighting.id }}">On {{ sighting.harvest_date }} at {{ sighting.location }}</a>,
+            a {{ sighting.location_modifier }} {{ sighting.location_type }} with rating {{ sighting.rating }}</li>
+    {% endfor %}
+    </ul>
 <a href="/mushrooms/new">Delete harvest</a>
 {% endblock %}
 

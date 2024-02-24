@@ -10,7 +10,7 @@ def __get_user(username: str):
 
     :param username: string
     :return:
-        userrow or None
+        Row(id, name, password)
     """
     sql = text("SELECT * FROM Account WHERE username = :username")
     return db.session.execute(sql, {"username": username}).fetchone()
@@ -20,9 +20,9 @@ def __get_account(user_id: int):
     """
     Get account info by user_id
 
-    :param username: string
+    :param user_id: int
     :return:
-        password hash as str or None
+        Row(id, username)
     """
     sql = text("SELECT id,username FROM Account WHERE id = :user_id")
     return db.session.execute(sql, {"user_id": user_id}).fetchone()
@@ -94,16 +94,23 @@ def create_mushroom(name: str, family_id: str, season_start: str, season_end: st
 
 
 def get_mushrooms_list():
-    sql = "SELECT M.id, M.name, F.name FROM mushroom M JOIN family F ON M.family_id = F.id"
+    sql = """
+        SELECT M.id, M.name, F.name 
+        FROM mushroom M JOIN family F ON M.family_id = F.id
+        """
     return db.session.execute(text(sql)).fetchall()
 
 
 def get_mushroom(mushroom_id:int):
-    sql = "SELECT M.name, M.family_id, F.name AS family_name, M.season_start, M.season_end FROM mushroom m JOIN family F ON M.family_id = F.id WHERE m.id=:mushroom_id"
+    sql = ("""
+            SELECT M.name, M.family_id, F.name AS family_name, M.season_start, M.season_end 
+            FROM mushroom m JOIN family F ON M.family_id = F.id 
+            WHERE m.id=:mushroom_id
+           """)
     return db.session.execute(text(sql), {"mushroom_id": mushroom_id}).fetchone()
 
 
-def get_family_members(family_id:int):
+def get_family_members(family_id: int):
     sql = """
     SELECT id, name FROM mushroom WHERE family_id=:family_id
     """
@@ -112,7 +119,12 @@ def get_family_members(family_id:int):
 
 # Family
 def get_family_list():
-    sql = "SELECT id, name FROM family"
+    sql = ("""
+            WITH amounts AS
+            (SELECT M.family_id, COUNT(*) AS amount FROM mushroom M GROUP BY family_id)
+            SELECT F.id, F.name, A.amount 
+            FROM family F JOIN amounts A ON A.family_id = F.id
+            """)
     return db.session.execute(text(sql)).fetchall()
 
 
@@ -144,36 +156,68 @@ def get_new_sightings():
     return db.session.execute(text(sql), {"show_limit": show_limit}).fetchall()
 
 
-def get_mushroom_last_sightings(mushroom_id: int, limit: int):
+def get_last_sighting_by_mushroom_id(mushroom_id: int, limit: int = 5):
+    """
+    get :limit last by :harvest_date sighting of :mushroom_id
+    :param mushroom_id:
+    :param limit:
+    :return:
+        Row (id, harvest_date, name, location, location_type, location_modifier, rating)
+    """
     sql = """
-    WITH sights AS 
-    (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY harvest_date DESC LIMIT :limit)
-    
-    SELECT S.id, S.harvest_date, M.name, S.location, S.location_type, S.location_modifier, S.rating 
-    FROM sights S JOIN mushroom M on S.mushroom_id = M.id
+    SELECT S.id, S.harvest_date, M.name, S.account_id, A.username AS account_name, S.location, S.location_type, S.location_modifier, S.rating 
+    FROM sighting S 
+    JOIN mushroom M on S.mushroom_id = M.id
+    JOIN account A on S.account_id = A.id
     WHERE S.mushroom_id = :mushroom_id
     ORDER BY harvest_date DESC 
     LIMIT :limit"""
-    return db.session.execute(text(sql), {"mushroom_id":mushroom_id, "limit":limit}).fetchall()
+    return db.session.execute(text(sql), {"mushroom_id": mushroom_id, "limit": limit}).fetchall()
 
 
-def get_mushroom_top_sightings(mushroom_id: int, limit: int):
+def get_top_sighting_by_mushroom_id(mushroom_id: int, limit: int = 5):
+    """
+    get :limit best by :rating sightings of :mushroom_id
+    :param mushroom_id: id in table mushroom
+    :param limit: return this many sightings
+    :return:
+        Row(id, harvest_date, mushroom_name, location, location_type, location_modifier, rating)
+    """
     sql = """
     WITH sights AS 
     (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY rating DESC, harvest_date DESC LIMIT :limit)
 
-    SELECT S.id, S.harvest_date, M.name, S.location, S.location_type, S.location_modifier, S.rating 
-    FROM sights S JOIN mushroom M on S.mushroom_id = M.id
+    SELECT S.id, S.harvest_date, M.name AS mushroom_name, S.location, S.location_type, S.location_modifier, S.rating 
+    FROM sights S JOIN mushroom M on S.mushroom_id = M.id LEFT JOIN family F ON M.family_id = F.id
     WHERE S.mushroom_id = :mushroom_id
     ORDER BY S.rating DESC, S.harvest_date DESC 
     LIMIT :limit"""
     return db.session.execute(text(sql), {"mushroom_id": mushroom_id, "limit": limit}).fetchall()
 
 
+def get_last_sighting_by_account_id(account_id: int, limit: int = 5):
+    """
+    get :limit last sightings made by :account_id
+    :param account_id:
+    :param limit:
+    :return:
+        Row(id, mushroom_id, mushroom_name, mushroom_family, harvest_date, location, location_type,
+            location_modifier, rating)
+    """
+    sql = """
+    SELECT S.id, S.mushroom_id, M.name AS mushroom_name, F.name AS mushroom_family, 
+        S.harvest_date, S.location, S.location_type, S.location_modifier, S.rating  
+    FROM sighting S JOIN mushroom M ON S.mushroom_id = M.id LEFT JOIN family F on M.family_id = F.id 
+    WHERE account_id=:account_id ORDER BY harvest_date DESC LIMIT :limit
+    """
+    return db.session.execute(text(sql), {"account_id": account_id, "limit": limit}).fetchall()
+
+
 def get_sighting(sighting_id: int):
     sql = """
     SELECT S.id, M.name AS mushroom_name, S.mushroom_id, M.family_id, F.name AS family_name, 
-    S.account_id, A.username, S.harvest_date, S.rating 
+    S.account_id, A.username AS account_name, S.harvest_date, S.publish_date, S.location, S.location_type, 
+    S.location_modifier, S.rating, S.notes 
     FROM sighting S 
     JOIN mushroom M ON S.mushroom_id = M.id 
     JOIN family F ON M.family_id = F.id

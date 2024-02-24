@@ -3,8 +3,9 @@ import calendar
 from app import app
 from db_operations import (get_mushrooms_list, get_sightings, get_family_list, create_user, create_mushroom,
                            check_user, get_user_list, get_new_sightings, create_sighting, create_family,
-                           get_account_info, get_mushroom, get_mushroom_last_sightings, get_mushroom_top_sightings,
-                           get_family_members, get_family, get_sighting)
+                           get_account_info, get_mushroom, get_last_sighting_by_mushroom_id,
+                           get_top_sighting_by_mushroom_id, get_family_members, get_family, get_sighting,
+                           get_last_sighting_by_account_id)
 
 
 @app.route("/")
@@ -81,8 +82,8 @@ def add_mushroom():
 # TODO
 def mushroom_page(mushroom_id):
     mushroom = get_mushroom(mushroom_id)
-    last_harvests = get_mushroom_last_sightings(mushroom_id, 5)
-    top_harvests = get_mushroom_top_sightings(mushroom_id, 5)
+    last_harvests = get_last_sighting_by_mushroom_id(mushroom_id, 5)
+    top_harvests = get_top_sighting_by_mushroom_id(mushroom_id, 5)
     return render_template("mushroom_page.html",
                            mushroom=mushroom, last_harvests=last_harvests, top_harvests=top_harvests)
 
@@ -101,10 +102,13 @@ def sightings():
 
 
 @app.route("/sightings/<int:sighting_id>")
-# TODO
 def sighting_page(sighting_id):
     harvest = get_sighting(sighting_id)
-    return render_template("sighting_page.html", harvest=harvest)
+
+    user_harvest = get_last_sighting_by_account_id(harvest.account_id)
+    mushroom_harvest = get_last_sighting_by_mushroom_id(harvest.mushroom_id)
+    return render_template("sighting_page.html", harvest=harvest, user_harvest=user_harvest,
+                           mushroom_harvest=mushroom_harvest)
 
 
 @app.route("/sightings/new")
@@ -155,3 +159,14 @@ def new_family_page():
 # TODO
 def seasons():
     return render_template("seasons.html")
+
+
+def loc_modifier(location_modifier: int):
+    xformer = {1: 'arid', 2: 'dry', 3: 'normal', 4: 'wet', 5: 'underwater'}
+    return xformer[location_modifier]
+
+
+def loc_type(location_type: int):
+    xformer = {1: 'coniferous forest', 2: 'deciduous forest', 3: 'mixed forest', 4: 'field', 5: 'grass', 6: 'manure',
+               7: 'swamp', 8: 'concrete', 9: 'volcanic glass'}
+    return xformer[location_type]

@@ -3,8 +3,8 @@
 {% block content %}
 <h1>Mushroom groups</h1>
 <ul>
-    {% for id,name in families %}
-        <li><a href="/families/{{ id }}">{{name}}</a></li>
+    {% for id,name, amount in families %}
+        <li><a href="/families/{{ id }}">{{name}} ({{ amount }} members)</a></li>
     {% endfor %}
 </ul>
 
