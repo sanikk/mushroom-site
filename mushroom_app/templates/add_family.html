@@ -2,13 +2,15 @@
 {% block title %}Add a mushroom{% endblock %}
 {% block content %}
 <form action="/mushrooms/add" method="POST" enctype="multipart/form-data">
-    Mushroom common name
+    Mushroom group name
     <input type="text" name="name"><br>
-    <label for="family">Ryhmä</label>
-    <select name="family">
-        {% for family_id,family_name in families %}
-        <option value={{family_id}}>{{family_name}}</option>
+
+    <label for="locations">Locations</label>
+    <p>
+        {% for location_id,location_name in locations %}
+        <input type="checkbox" name="locations" value={{location_id}}>{{location_name}}
         {% endfor %}
+    </p>
     </select><br>
     <label for="season_start">Season start</label>
     <select name="season_start">

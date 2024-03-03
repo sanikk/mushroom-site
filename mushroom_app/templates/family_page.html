@@ -6,7 +6,7 @@
 <h3>Members of {{ family.name }}</h3>
 <ul>
     {% for mushroom in mushrooms %}
-        <li><a href="/mushroom/{{ mushroom.id }}">{{ mushroom.name }}.</a></li>
+        <li><a href="/mushrooms/{{ mushroom.id }}">{{ mushroom.name }} ({{ mushroom.amount }} sightings).</a></li>
     {% endfor %}
 </ul>
 

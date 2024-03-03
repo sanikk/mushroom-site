@@ -2,7 +2,25 @@
 {% block title %}Sightings{% endblock %}
 {% block content %}
 <h1>Sightings</h1>
-
+<form action="/sightings/sort" method="POST" enctype="multipart/form-data">
+    <label for="sorting">Sort by</label>
+    <select name="sorting">
+        {% for id,name in [(1, "Harvest date"), (2, "Publish date"), (3, "Location"), (4, "Rating")] %}
+            <option value={{id}}>{{name}}</option>
+        {% endfor %}
+    </select>, show
+    <select name="limit">
+        {% for lim in [10,20,100] %}
+            <option value={{ lim }}>{{ lim }}</option>
+        {% endfor %}
+    </select> in
+    <select name="ascdesc">
+        {% for id,name in [(1,'Descending'), (2, 'Ascending')] %}
+            <option value={{ id }}>{{ name }}</option>
+        {% endfor %}
+    </select> order
+    <input type="submit" value="Show">
+</form>
 <h3>Most recent:</h3>
 <ul>
     {% for sighting_id,name,harvest_date,location,rating in sightings %}

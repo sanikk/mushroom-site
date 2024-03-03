@@ -3,8 +3,9 @@
 {% block content %}
 <h1>Mushrooms</h1>
 <ul>
-    {% for id,name,family in mushrooms %}
-    <li><a href="/mushrooms/{{id}}">{{name}} ({{family}})</a></li>
+    {% for id,name,family_id, family_name, amount in mushrooms %}
+        <li><a href="/mushrooms/{{id}}">{{name}}</a> <a href="/families/{{ family_id }}">({{family_name}})</a>
+            {% if amount == 1 %} 1 sighting.{% else %} {{ amount }} sightings.{% endif %}</li>
     {% endfor %}
 </ul>
 

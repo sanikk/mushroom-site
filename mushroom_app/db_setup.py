@@ -60,8 +60,38 @@ def create_db_tables():
                 notes TEXT
             );"""
         cur.execute(sql)
+        sql = """
+            CREATE TABLE location_modifier (
+                id SERIAL PRIMARY KEY,
+                name TEXT 
+            );
+        """
+        cur.execute(sql)
+        sql = """
+            CREATE TABLE location_type (
+                id SERIAL PRIMARY KEY,
+                name TEXT
+            );
+        """
+        cur.execute(sql)
     conn.commit()
+    cur.close()
+    conn.close()
 
+
+def locations():
+    conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
+    with conn.cursor() as cur:
+        modifiers = ["arid", "dry", "not weird at all", "wet", "underwater"]
+        for mod in modifiers:
+            sql = "INSERT INTO location_modifier (name) VALUES (%s)"
+            cur.execute(sql, (mod,))
+        types = ['coniferous forest', 'deciduous forest', 'mixed forest', 'field', 'grass', 'manure', 'swamp',
+                 'concrete', 'volcanic glass']
+        for typ in types:
+            sql = "INSERT INTO location_type (name) VALUES (%s)"
+            cur.execute(sql, (typ,))
+    conn.commit()
     cur.close()
     conn.close()
 
@@ -123,8 +153,6 @@ def populate():
 def testeri():
     conn = psycopg2.connect(f"dbname={os.getenv('DBNAME')} user={os.getenv('USER')}")
     cur = conn.cursor()
-
-
     sql = "INSERT INTO account (username, password) VALUES ('user'||generate_series(1,20), 'password')"
     cur.execute(sql)
     conn.commit()

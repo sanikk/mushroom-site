@@ -95,13 +95,14 @@ def create_mushroom(name: str, family_id: str, season_start: str, season_end: st
 
 def get_mushrooms_list():
     sql = """
-        SELECT M.id, M.name, F.name 
-        FROM mushroom M JOIN family F ON M.family_id = F.id
-        """
+        SELECT M.id, M.name, F.id AS family_id, F.name AS family_name, COUNT(S.id) AS amount 
+        FROM mushroom M LEFT JOIN sighting S ON M.id = S.mushroom_id LEFT JOIN family F ON M.family_id = F.id 
+        GROUP BY M.id, F.id;
+    """
     return db.session.execute(text(sql)).fetchall()
 
 
-def get_mushroom(mushroom_id:int):
+def get_mushroom(mushroom_id: int):
     sql = ("""
             SELECT M.name, M.family_id, F.name AS family_name, M.season_start, M.season_end 
             FROM mushroom m JOIN family F ON M.family_id = F.id 
@@ -112,19 +113,22 @@ def get_mushroom(mushroom_id:int):
 
 def get_family_members(family_id: int):
     sql = """
-    SELECT id, name FROM mushroom WHERE family_id=:family_id
+    SELECT M.id, M.name, COUNT(S.id) AS amount 
+    FROM mushroom M LEFT JOIN sighting S on M.id = S.mushroom_id
+    WHERE family_id=:family_id
+    GROUP BY M.id
     """
     return db.session.execute(text(sql), {"family_id": family_id}).fetchall()
 
 
 # Family
 def get_family_list():
-    sql = ("""
-            WITH amounts AS
-            (SELECT M.family_id, COUNT(*) AS amount FROM mushroom M GROUP BY family_id)
-            SELECT F.id, F.name, A.amount 
-            FROM family F JOIN amounts A ON A.family_id = F.id
-            """)
+    sql = """
+        WITH amounts AS
+        (SELECT M.family_id, COUNT(*) AS amount FROM mushroom M GROUP BY family_id)
+        SELECT F.id, F.name, A.amount 
+        FROM family F JOIN amounts A ON A.family_id = F.id
+            """
     return db.session.execute(text(sql)).fetchall()
 
 
@@ -184,14 +188,12 @@ def get_top_sighting_by_mushroom_id(mushroom_id: int, limit: int = 5):
         Row(id, harvest_date, mushroom_name, location, location_type, location_modifier, rating)
     """
     sql = """
-    WITH sights AS 
+    WITH sights AS
     (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY rating DESC, harvest_date DESC LIMIT :limit)
-
-    SELECT S.id, S.harvest_date, M.name AS mushroom_name, S.location, S.location_type, S.location_modifier, S.rating 
+    SELECT S.id, S.harvest_date, M.name AS mushroom_name, S.location, S.location_type, S.location_modifier, S.rating,
+    M.family_id, F.name AS family_name
     FROM sights S JOIN mushroom M on S.mushroom_id = M.id LEFT JOIN family F ON M.family_id = F.id
-    WHERE S.mushroom_id = :mushroom_id
-    ORDER BY S.rating DESC, S.harvest_date DESC 
-    LIMIT :limit"""
+    """
     return db.session.execute(text(sql), {"mushroom_id": mushroom_id, "limit": limit}).fetchall()
 
 

@@ -1,5 +1,5 @@
 from invoke import task
-from mushroom_app.db_setup import drop_db_tables, create_db_tables, populate, testeri, testeri2
+from mushroom_app.db_setup import drop_db_tables, create_db_tables, populate, testeri, testeri2, locations
 
 
 @task
@@ -41,3 +41,8 @@ def dev(c):
 @task
 def tester(c):
     testeri2()
+
+
+@task
+def loc(c):
+    locations()

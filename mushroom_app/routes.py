@@ -1,7 +1,7 @@
 from flask import redirect, render_template, request, session
 import calendar
 from app import app
-from db_operations import (get_mushrooms_list, get_sightings, get_family_list, create_user, create_mushroom,
+from db_operations import (get_mushrooms_list, get_family_list, create_user, create_mushroom,
                            check_user, get_user_list, get_new_sightings, create_sighting, create_family,
                            get_account_info, get_mushroom, get_last_sighting_by_mushroom_id,
                            get_top_sighting_by_mushroom_id, get_family_members, get_family, get_sighting,
@@ -107,8 +107,9 @@ def sighting_page(sighting_id):
 
     user_harvest = get_last_sighting_by_account_id(harvest.account_id)
     mushroom_harvest = get_last_sighting_by_mushroom_id(harvest.mushroom_id)
+    sortings=[(1, "Harvest date"), (2, "Publish date"), (3, "Location"), (4, "Rating")]
     return render_template("sighting_page.html", harvest=harvest, user_harvest=user_harvest,
-                           mushroom_harvest=mushroom_harvest)
+                           mushroom_harvest=mushroom_harvest, sortings=sortings)
 
 
 @app.route("/sightings/new")
@@ -162,7 +163,7 @@ def seasons():
 
 
 def loc_modifier(location_modifier: int):
-    xformer = {1: 'arid', 2: 'dry', 3: 'normal', 4: 'wet', 5: 'underwater'}
+    xformer = {1: 'arid', 2: 'dry', 3: 'not weird at all', 4: 'wet', 5: 'underwater'}
     return xformer[location_modifier]
 
 
