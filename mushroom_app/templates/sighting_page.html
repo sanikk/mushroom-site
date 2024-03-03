@@ -4,7 +4,7 @@
 <h2>Harvest on {{harvest.harvest_date}}</h2>
 <p>Reported by <a href="/accounts/{{ harvest.account_id }}">{{ harvest.account_name }}</a> at {{ harvest.publish_date }}.</p>
 <p>{{ harvest.mushroom_name }} of the family <a href="/families/{{ harvest.family_id }}">{{ harvest.family_name }}</a>.</p>
-<p>Found in a {{ harvest.location_modifier }} {{ harvest.location_type }} near {{ harvest.location }}</p>
+<p>Found in {{ harvest.location_modifier_name }} {{ harvest.location_type_name }} near {{ harvest.location }}</p>
 <div style="border: 3px solid black">
 Rating<br>
 <h2>{{ harvest.rating }} / 10</h2>
@@ -13,7 +13,7 @@ Rating<br>
     <ul>
     {% for sighting in mushroom_harvest %}
         <li><a href="/sightings/{{ sighting.id }}">On {{ sighting.harvest_date }} at {{ sighting.location }}</a>,
-            a {{ sighting.location_modifier }} {{ sighting.location_type }} with rating {{ sighting.rating }}
+            {{ sighting.location_modifier_name }} {{ sighting.location_type_name }} with rating {{ sighting.rating }}
             by <a href="/accounts/{{ sighting.account_id }}">{{ sighting.account_name }}</a></li>
     {% endfor %}
     </ul>
@@ -21,7 +21,7 @@ Rating<br>
     <ul>
     {% for sighting in user_harvest %}
         <li><a href="/sightings/{{ sighting.id }}">On {{ sighting.harvest_date }} at {{ sighting.location }}</a>,
-            a {{ sighting.location_modifier }} {{ sighting.location_type }} with rating {{ sighting.rating }}</li>
+            {{ sighting.location_modifier_name }} {{ sighting.location_type_name }} with rating {{ sighting.rating }}</li>
     {% endfor %}
     </ul>
 <a href="/mushrooms/new">Delete harvest</a>

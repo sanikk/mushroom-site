@@ -160,14 +160,3 @@ def new_family_page():
 # TODO
 def seasons():
     return render_template("seasons.html")
-
-
-def loc_modifier(location_modifier: int):
-    xformer = {1: 'arid', 2: 'dry', 3: 'not weird at all', 4: 'wet', 5: 'underwater'}
-    return xformer[location_modifier]
-
-
-def loc_type(location_type: int):
-    xformer = {1: 'coniferous forest', 2: 'deciduous forest', 3: 'mixed forest', 4: 'field', 5: 'grass', 6: 'manure',
-               7: 'swamp', 8: 'concrete', 9: 'volcanic glass'}
-    return xformer[location_type]
