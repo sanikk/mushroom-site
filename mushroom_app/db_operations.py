@@ -169,8 +169,8 @@ def get_last_sighting_by_mushroom_id(mushroom_id: int, limit: int = 5):
         Row (id, harvest_date, name, location, location_type, location_modifier, rating)
     """
     sql = """
-    SELECT S.id, S.harvest_date, M.name, S.account_id, A.username AS account_name, S.location, S.location_type, 
-    T.name AS location_type_name, S.location_modifier, location_modifier.name AS location_modifier_name, S.rating 
+    SELECT S.id, S.harvest_date, M.name, S.account_id, A.username AS account_name, S.location, 
+    T.name AS location_type, location_modifier.name AS location_modifier, S.rating 
     FROM sighting S 
     JOIN mushroom M on S.mushroom_id = M.id
     JOIN account A on S.account_id = A.id
@@ -191,11 +191,14 @@ def get_top_sighting_by_mushroom_id(mushroom_id: int, limit: int = 5):
         Row(id, harvest_date, mushroom_name, location, location_type, location_modifier, rating)
     """
     sql = """
-    WITH sights AS
-    (SELECT * FROM sighting WHERE mushroom_id =:mushroom_id ORDER BY rating DESC, harvest_date DESC LIMIT :limit)
-    SELECT S.id, S.harvest_date, M.name AS mushroom_name, S.location, S.location_type, S.location_modifier, S.rating,
-    M.family_id, F.name AS family_name
-    FROM sights S JOIN mushroom M on S.mushroom_id = M.id LEFT JOIN family F ON M.family_id = F.id
+    SELECT S.id, S.harvest_date, M.name AS mushroom_name, S.location, T.name AS location_type, 
+    location_modifier.name AS location_modifier, S.rating, M.family_id, F.name AS family_name
+    FROM sighting S JOIN mushroom M on S.mushroom_id = M.id LEFT JOIN family F ON M.family_id = F.id
+    JOIN location_modifier ON location_modifier.id = S.location_modifier
+    JOIN location_type T ON S.location_type = T.id
+    WHERE mushroom_id =:mushroom_id 
+    ORDER BY rating DESC, harvest_date DESC 
+    LIMIT :limit
     """
     return db.session.execute(text(sql), {"mushroom_id": mushroom_id, "limit": limit}).fetchall()
 
@@ -211,8 +214,8 @@ def get_last_sighting_by_account_id(account_id: int, limit: int = 5):
     """
     sql = """
     SELECT S.id, S.mushroom_id, M.name AS mushroom_name, F.name AS mushroom_family, 
-        S.harvest_date, S.location, S.location_type, T.name AS location_type_name, S.location_modifier, 
-        location_modifier.name AS location_modifier_name, S.rating  
+        S.harvest_date, S.location, T.name AS location_type,  location_modifier.name AS location_modifier, 
+        S.rating  
     FROM sighting S JOIN mushroom M ON S.mushroom_id = M.id LEFT JOIN family F on M.family_id = F.id
     JOIN location_type T ON S.location_type = T.id
     JOIN location_modifier ON S.location_modifier = location_modifier.id 
@@ -224,8 +227,8 @@ def get_last_sighting_by_account_id(account_id: int, limit: int = 5):
 def get_sighting(sighting_id: int):
     sql = """
     SELECT S.id, M.name AS mushroom_name, S.mushroom_id, M.family_id, F.name AS family_name, 
-    S.account_id, A.username AS account_name, S.harvest_date, S.publish_date, S.location, S.location_type, 
-    T.name AS location_type_name, S.location_modifier, location_modifier.name AS location_modifier_name, S.rating, S.notes 
+    S.account_id, A.username AS account_name, S.harvest_date, S.publish_date, S.location, 
+    T.name AS location_type, location_modifier.name AS location_modifier, S.rating, S.notes 
     FROM sighting S 
     JOIN mushroom M ON S.mushroom_id = M.id 
     JOIN family F ON M.family_id = F.id
